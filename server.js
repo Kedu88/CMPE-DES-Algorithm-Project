@@ -10,7 +10,7 @@ const server = net.createServer((socket) => {
     // Receive data from Client
     socket.on('data', (data) => {
         const decryptedMessage = decrypt(data.toString(), key);
-        console.log('Server: Received Encrypted from Client:', data.toString());
+        console.log('Server: Received Encrypted value from Client:', data.toString());
         console.log('Server: Received message from Client:', decryptedMessage);
     });
 

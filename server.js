@@ -1,12 +1,17 @@
 const net = require('net');
 const readline = require('readline');
+const crypto = require('crypto-js');
+
+const key = 'cmpe455labProject!';
 
 const serverA = net.createServer((socket) => {
     console.log('Server: Client connected.');
 
-    // Receive data from Server B
+    // Receive data from Client
     socket.on('data', (data) => {
-        console.log('Server: Received message from Client:', data.toString());
+        const decryptedMessage = decrypt(data.toString(), key);
+        console.log('Server: Received Encrypted from Client:', data.toString());
+        console.log('Server: Received message from Client:', decryptedMessage);
     });
 
     // Handle client disconnection
@@ -31,3 +36,14 @@ const PORT_A = 3000;
 serverA.listen(PORT_A, () => {
     console.log(`Server: Client listening on port ${PORT_A}`);
 });
+
+
+// function encrypt(text, key) {
+//     const des = crypto.DES.encrypt(text, key);
+//     return des.toString();
+// }
+
+function decrypt(encryptedText, key) {
+    const des = crypto.DES.decrypt(encryptedText, key);
+    return des.toString(crypto.enc.Utf8);
+}

@@ -10,12 +10,12 @@ const prompt = readline.createInterface({
 });
 
 // Create a client to connect to Server
-const clientToA = new net.Socket();
+const client = new net.Socket();
 
 // Connect to Server A
 const PORT_A = 3000;
 const HOST_A = '127.0.0.1'; // localhost
-clientToA.connect(PORT_A, HOST_A, () => {
+client.connect(PORT_A, HOST_A, () => {
     console.log('Client connected to Server.');
 
     // Start listening for user input
@@ -26,21 +26,21 @@ clientToA.connect(PORT_A, HOST_A, () => {
 prompt.on('line', (input) => {
     // Send user input to Server
     const encryptedInput = encrypt(input, key);
-    clientToA.write(encryptedInput);
+    client.write(encryptedInput);
 
     // Continue listening for user input
     prompt.prompt();
 });
 
 // Handle data received from Server 
-clientToA.on('data', (data) => {
+client.on('data', (data) => {
     const decryptedMessage = decrypt(data.toString(), key);
     console.log('Client: Received Decrypted message from Server:', data.toString());
     console.log('Client: Received message from Server:', decryptedMessage);
 });
 
 // Handle disconnection from Server 
-clientToA.on('close', () => {
+client.on('close', () => {
     console.log('Client: connection to server closed.');
 });
 

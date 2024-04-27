@@ -1,6 +1,8 @@
 const net = require('net');
 const readline = require('readline');
-const crypto = require('crypto-js');
+
+const { DESDecryption } = require("./des/decryption");
+const { DESEncryption } = require("./des/encryption");
 
 const key = 'cmpe455labProject!';
 
@@ -25,7 +27,7 @@ client.connect(PORT_A, HOST_A, () => {
 // Handle user input
 prompt.on('line', (input) => {
     // Send user input to Server
-    const encryptedInput = encrypt(input, key);
+    const encryptedInput = DESEncryption(input, key, key);
     client.write(encryptedInput);
 
     // Continue listening for user input
@@ -34,7 +36,7 @@ prompt.on('line', (input) => {
 
 // Handle data received from Server 
 client.on('data', (data) => {
-    const decryptedMessage = decrypt(data.toString(), key);
+    const decryptedMessage = DESDecryption(key, data.toString(), key);
     console.log('Client: Received Decrypted message from Server:', data.toString());
     console.log('Client: Received message from Server:', decryptedMessage);
 });
@@ -43,13 +45,3 @@ client.on('data', (data) => {
 client.on('close', () => {
     console.log('Client: connection to server closed.');
 });
-
-function encrypt(text, key) {
-    const des = crypto.DES.encrypt(text, key);
-    return des.toString();
-}
-
-function decrypt(encryptedText, key) {
-    const des = crypto.DES.decrypt(encryptedText, key);
-    return des.toString(crypto.enc.Utf8);
-}
